@@ -8,7 +8,8 @@
 		"dev": "ts-node server.ts",
 		"start:node:cjs": "ts-node servernode.ts",
 		"start:node:js": "node servernode.js",
-		"start:node:mjs": "node servernode.mjs"
+		"start:node:mjs": "node servernode.mjs",
+		"start:ae": "ts-node ejemplos-async-express.ts"
 	},
 	"keywords": [
 		"express",

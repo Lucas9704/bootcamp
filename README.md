@@ -205,14 +205,58 @@ Content-Type: application/json
 | Carga           | Síncrona         | Asíncrona                             |
 | Top-level await | ❌ No            | ✅ Sí                                 |
 
-## 🚀 Próximos Pasos
+## � Archivos de Ejemplos
 
-1. Prueba todos los endpoints con Thunder Client, incluyendo la ruta `/admin`
-2. Observa los logs en la consola del servidor (middleware logger)
-3. Nota el delay de 500ms en la ruta `/usuarios` (async/await)
-4. Intenta agregar más middlewares personalizados
-5. Experimenta con diferentes códigos de estado HTTP
-6. Agrega validaciones adicionales y más campos a los usuarios
+### `ejemplos-async.ts` - Conceptos de Asincronía
+
+Archivo educativo con ejemplos completos de:
+
+- ✅ Promesas con `.then()` y `.catch()`
+- ✅ Async/Await con `try/catch`
+- ✅ Comparación entre ambas sintaxis
+- ✅ Manejo de errores
+- ✅ Operaciones en paralelo con `Promise.all()`
+
+**Para ejecutar:**
+
+```bash
+npx ts-node ejemplos-async.ts
+```
+
+### `ejemplos-async-express.ts` - Ejemplos Prácticos en Express
+
+Servidor Express (Puerto 3005) con ejemplos aplicados:
+
+- ✅ Rutas con Promesas vs Async/Await
+- ✅ Operaciones secuenciales vs paralelas
+- ✅ Manejo avanzado de errores
+- ✅ Comparación de rendimiento
+
+**Para ejecutar:**
+
+```bash
+npx ts-node ejemplos-async-express.ts
+```
+
+**Endpoints disponibles:**
+
+- `GET http://localhost:3005/api/v2` - Documentación de la API
+- `GET http://localhost:3005/api/v1/usuarios/:id` - Con Promesas
+- `GET http://localhost:3005/api/v2/usuarios/:id` - Con Async/Await
+- `GET http://localhost:3005/api/v2/usuarios/:id/posts` - Operaciones secuenciales
+- `GET http://localhost:3005/api/v2/usuarios-multiples` - Operaciones en paralelo
+- `GET http://localhost:3005/api/v2/comparacion` - Comparación de rendimiento
+
+## �🚀 Próximos Pasos
+
+1. Ejecuta `ejemplos-async.ts` para ver conceptos de asincronía en la consola
+2. Ejecuta `ejemplos-async-express.ts` y prueba los endpoints
+3. Prueba todos los endpoints con Thunder Client, incluyendo la ruta `/admin`
+4. Observa los logs en la consola del servidor (middleware logger)
+5. Nota el delay de 500ms en la ruta `/usuarios` (async/await)
+6. Compara el rendimiento entre operaciones secuenciales y paralelas
+7. Intenta agregar más middlewares personalizados
+8. Experimenta con diferentes códigos de estado HTTP
 
 ## 📦 Estructura del Proyecto
 
@@ -224,13 +268,19 @@ taller-express/
 ├── .gitignore
 ├── package.json
 ├── tsconfig.json
-├── server.ts           (Express + TypeScript - Rutas y controladores - Puerto 3000)
-├── middlewares.ts      (Middlewares personalizados: logger, isAdmin)
-├── database.ts         (Servicio de BD simulado con operaciones asíncronas)
-├── servernode.ts       (Node.js HTTP nativo + TypeScript CommonJS - Puerto 3003)
-├── servernode.esm.ts   (Node.js HTTP nativo + TypeScript ES Modules - Puerto 3004)
-├── servernode.js       (Node.js HTTP nativo + CommonJS - Puerto 3001)
-├── servernode.mjs      (Node.js HTTP nativo + ES Modules - Puerto 3002)
+│
+├── server.ts                    (Express API - Puerto 3000)
+├── middlewares.ts               (Middlewares: logger, isAdmin)
+├── database.ts                  (Servicio de BD simulado)
+│
+├── ejemplos-async.ts            (📚 Ejemplos de Promesas y Async/Await)
+├── ejemplos-async-express.ts   (📚 Ejemplos prácticos en Express - Puerto 3005)
+│
+├── servernode.ts                (Node.js HTTP + TS CommonJS - Puerto 3003)
+├── servernode.esm.ts            (Node.js HTTP + TS ES Modules - Puerto 3004)
+├── servernode.js                (Node.js HTTP + CommonJS - Puerto 3001)
+├── servernode.mjs               (Node.js HTTP + ES Modules - Puerto 3002)
+│
 └── README.md
 ```
 
