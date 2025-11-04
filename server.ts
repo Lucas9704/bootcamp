@@ -1,5 +1,5 @@
 // Importar express y los tipos Request/Response
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 // Importar middlewares personalizados
 import { logger, isAdmin } from "./middlewares";
 // Importar servicios de base de datos
@@ -36,16 +36,9 @@ app.get("/usuarios", async (req: Request, res: Response) => {
 });
 
 // Ruta protegida por el middleware 'isAdmin'
-app.get(
-	"/admin",
-	(req: Request, res: Response) =>
-		isAdmin(req, res, () => {
-			console.log("Acceso concedido a ruta /admin");
-		}),
-	(req: Request, res: Response) => {
-		res.send("Hola Admin");
-	}
-);
+app.get("/admin", isAdmin, (req: Request, res: Response) => {
+	res.send("Hola Admin");
+});
 
 // Obtener un usuario por ID usando req.params
 app.get("/usuarios/:id", (req: Request, res: Response) => {

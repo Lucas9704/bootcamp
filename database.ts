@@ -19,7 +19,7 @@ let nextId = 4;
  */
 export const getUsuariosDB = (): Promise<typeof usuarios> => {
 	return new Promise((resolve) => {
-		setTimeout(() => resolve(usuarios), 500);
+		setTimeout(() => resolve(usuarios), 5000);
 	});
 };
 
