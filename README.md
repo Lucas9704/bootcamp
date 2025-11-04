@@ -64,13 +64,25 @@ GET http://localhost:3000/
 
 **Respuesta esperada:** `Hello World with Express`
 
-### 2. GET `/usuarios` - Obtener todos los usuarios
+**Nota:** En la consola del servidor verás el log: `GET /` (gracias al middleware logger)
+
+### 2. GET `/usuarios` - Obtener todos los usuarios (Asíncrono)
 
 ```
 GET http://localhost:3000/usuarios
 ```
 
 **Respuesta esperada:** JSON con lista de 3 usuarios
+
+**Nota:**
+
+- En la consola verás:
+  ```
+  GET /usuarios
+  Buscando usuarios en la 'Base de Datos'...
+  Usuarios encontrados.
+  ```
+- La respuesta tardará al menos 500ms debido a la simulación de consulta a BD
 
 ### 3. GET `/usuarios/:id` - Obtener usuario por ID (req.params)
 
@@ -124,6 +136,34 @@ DELETE http://localhost:3000/usuarios/3
 
 **Respuesta esperada:** JSON del usuario eliminado (John Connor)
 
+### 8. GET `/admin` - Ruta protegida con middleware de autorización
+
+**Prueba 1 - Acceso Denegado:**
+
+```
+GET http://localhost:3000/admin
+Content-Type: application/json
+
+{
+  "isAdmin": false
+}
+```
+
+**Respuesta esperada:** Status `401 Unauthorized` con mensaje "No tienes permisos para acceder a esta ruta"
+
+**Prueba 2 - Acceso Permitido:**
+
+```
+GET http://localhost:3000/admin
+Content-Type: application/json
+
+{
+  "isAdmin": true
+}
+```
+
+**Respuesta esperada:** Status `200 OK` con mensaje "Hola Admin"
+
 ## 📚 Conceptos Aprendidos
 
 ### API REST
@@ -132,9 +172,22 @@ DELETE http://localhost:3000/usuarios/3
 - ✅ **req.params**: Parámetros de ruta (`:id`)
 - ✅ **req.query**: Parámetros de consulta (`?nombre=valor`)
 - ✅ **req.body**: Cuerpo de la solicitud (datos JSON)
-- ✅ **Códigos de estado HTTP**: 200, 201, 400, 404
-- ✅ **Middleware**: `express.json()`
+- ✅ **Códigos de estado HTTP**: 200, 201, 400, 401, 404, 500
 - ✅ **CRUD completo**: Create, Read, Update, Delete
+
+### Middlewares
+
+- ✅ **Middleware global**: Se ejecuta en todas las rutas (ejemplo: `logger`)
+- ✅ **Middleware de ruta**: Se ejecuta solo en rutas específicas (ejemplo: `isAdmin`)
+- ✅ **Función `next()`**: Pasa el control al siguiente middleware o controlador
+- ✅ **Middleware integrado**: `express.json()` para parsear JSON
+
+### Asincronismo
+
+- ✅ **Promesas**: Manejo de operaciones asíncronas
+- ✅ **async/await**: Sintaxis moderna para trabajar con promesas
+- ✅ **try/catch**: Manejo de errores en código asíncrono
+- ✅ **Simulación de BD**: Delay artificial para simular operaciones de I/O
 
 ### Sistemas de Módulos en Node.js
 
@@ -154,10 +207,12 @@ DELETE http://localhost:3000/usuarios/3
 
 ## 🚀 Próximos Pasos
 
-1. Prueba todos los endpoints con Thunder Client
-2. Intenta agregar validaciones adicionales
-3. Experimenta con diferentes códigos de estado HTTP
-4. Agrega más campos a los usuarios
+1. Prueba todos los endpoints con Thunder Client, incluyendo la ruta `/admin`
+2. Observa los logs en la consola del servidor (middleware logger)
+3. Nota el delay de 500ms en la ruta `/usuarios` (async/await)
+4. Intenta agregar más middlewares personalizados
+5. Experimenta con diferentes códigos de estado HTTP
+6. Agrega validaciones adicionales y más campos a los usuarios
 
 ## 📦 Estructura del Proyecto
 
@@ -166,11 +221,16 @@ taller-express/
 ├── .github/
 │   └── copilot-instructions.md
 ├── node_modules/
+├── .gitignore
 ├── package.json
 ├── tsconfig.json
-├── server.ts           (Express + TypeScript - Puerto 3000)
-├── servernode.js       (Node.js HTTP + CommonJS - Puerto 3001)
-├── servernode.mjs      (Node.js HTTP + ES Modules - Puerto 3002)
+├── server.ts           (Express + TypeScript - Rutas y controladores - Puerto 3000)
+├── middlewares.ts      (Middlewares personalizados: logger, isAdmin)
+├── database.ts         (Servicio de BD simulado con operaciones asíncronas)
+├── servernode.ts       (Node.js HTTP nativo + TypeScript CommonJS - Puerto 3003)
+├── servernode.esm.ts   (Node.js HTTP nativo + TypeScript ES Modules - Puerto 3004)
+├── servernode.js       (Node.js HTTP nativo + CommonJS - Puerto 3001)
+├── servernode.mjs      (Node.js HTTP nativo + ES Modules - Puerto 3002)
 └── README.md
 ```
 

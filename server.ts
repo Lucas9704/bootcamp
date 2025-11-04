@@ -1,5 +1,9 @@
 // Importar express y los tipos Request/Response
 import express, { Request, Response } from "express";
+// Importar middlewares personalizados
+import { logger, isAdmin } from "./middlewares";
+// Importar servicios de base de datos
+import { getUsuariosDB, usuarios, incrementNextId } from "./database";
 
 const PORT = 3000;
 const hostname = "localhost";
@@ -8,13 +12,8 @@ const app = express();
 // Middleware para que Express entienda JSON en el body
 app.use(express.json());
 
-// Base de datos en memoria
-let usuarios = [
-	{ id: 1, nombre: "Alice", apellido: "Smith", email: "alice@example.com" },
-	{ id: 2, nombre: "Bob", apellido: "Johnson", email: "bob@example.com" },
-	{ id: 3, nombre: "John", apellido: "Connor", email: "john@example.com" },
-];
-let nextId = 4;
+// Aplicar middleware de logging a todas las rutas
+app.use(logger);
 
 // --- RUTAS (ENDPOINTS) ---
 
@@ -23,9 +22,22 @@ app.get("/", (req: Request, res: Response) => {
 	res.send("Hello World with Express");
 });
 
-// Obtener todos los usuarios
-app.get("/usuarios", (req: Request, res: Response) => {
-	res.json(usuarios);
+// Obtener todos los usuarios (Refactorizado a async/await)
+app.get("/usuarios", async (req: Request, res: Response) => {
+	try {
+		console.log("Buscando usuarios en la 'Base de Datos'...");
+		const listaUsuarios = await getUsuariosDB();
+		console.log("Usuarios encontrados.");
+		res.json(listaUsuarios);
+	} catch (error) {
+		console.error("Error al buscar usuarios", error);
+		res.status(500).send("Error en el servidor");
+	}
+});
+
+// Ruta protegida por el middleware 'isAdmin'
+app.get("/admin", isAdmin, (req: Request, res: Response) => {
+	res.send("Hola Admin");
 });
 
 // Obtener un usuario por ID usando req.params
@@ -67,7 +79,7 @@ app.post("/new-user", (req: Request, res: Response) => {
 	}
 
 	const nuevoUsuario = {
-		id: nextId++,
+		id: incrementNextId(),
 		nombre: nombre,
 		apellido: apellido,
 		email: email,

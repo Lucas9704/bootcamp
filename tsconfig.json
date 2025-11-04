@@ -9,9 +9,7 @@
 		"esModuleInterop": true,
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
-		"resolveJsonModule": true,
-		"moduleResolution": "node10",
-		"ignoreDeprecations": "6.0"
+		"resolveJsonModule": true
 	},
 	"include": ["*.ts"],
 	"exclude": ["node_modules"]
