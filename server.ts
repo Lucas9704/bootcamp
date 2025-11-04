@@ -81,9 +81,8 @@ app.post("/new-user", (req: Request, res: Response) => {
 });
 
 // Actualizar un usuario por ID
-app.put("/usuarios/:id", (req: Request, res: Response) => {
+app.patch("/usuarios/:id", (req: Request, res: Response) => {
 	const { id } = req.params;
-	const { nombre, apellido, email } = req.body;
 
 	const index = usuarios.findIndex((u) => u.id === parseInt(id));
 

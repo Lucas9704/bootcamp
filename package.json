@@ -7,7 +7,8 @@
 		"start": "ts-node server.ts",
 		"dev": "ts-node server.ts",
 		"start:commonjs": "node servernode.js",
-		"start:modules": "node servernode.mjs"
+		"start:modules": "node servernode.mjs",
+		"start:prod": "node dist/server.js"
 	},
 	"keywords": [
 		"express",
