@@ -24,24 +24,30 @@ npm install
 
 ### Paso 3: Iniciar el Servidor
 
-El proyecto incluye **3 versiones** del servidor:
+El proyecto incluye varias versiones del servidor. Usa uno de estos comandos según lo que quieras ejecutar:
 
-#### 1️⃣ Servidor con Express.js y TypeScript (Puerto 3000)
+- Servidor con Express.js y TypeScript (Puerto 3000):
 
 ```bash
 npm start
 ```
 
-#### 2️⃣ Servidor Node.js nativo con CommonJS (Puerto 3001)
+- Servidor Node.js nativo (TypeScript - CommonJS) (Puerto 3003):
 
 ```bash
-npm run start:commonjs
+npm run start:node:cjs
 ```
 
-#### 3️⃣ Servidor Node.js nativo con ES Modules (Puerto 3002)
+- Servidor Node.js nativo (JavaScript - CommonJS) (Puerto 3001):
 
 ```bash
-npm run start:modules
+npm run start:node:js
+```
+
+- Servidor Node.js nativo (JavaScript - ES Modules) (Puerto 3002):
+
+```bash
+npm run start:node:mjs
 ```
 
 Deberías ver en la consola el mensaje correspondiente a cada servidor.
