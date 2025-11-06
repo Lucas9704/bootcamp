@@ -1,13 +1,17 @@
 // Importar express y los tipos Request/Response
 import express, { NextFunction, Request, Response } from "express";
 // Importar middlewares personalizados
-import { logger, isAdmin } from "./middlewares";
+import { logger, isAdmin, validateRequesterExists } from "./middlewares";
 // Importar servicios de base de datos
 import { getUsuariosDB, usuarios, incrementNextId } from "./database";
+import { connectDB } from "./config";
+import Usuario from "./models/Usuario";
 
 const PORT = 3000;
 const hostname = "localhost";
 const app = express();
+
+connectDB();
 
 // Middleware para que Express entienda JSON en el body
 app.use(express.json());
@@ -23,17 +27,18 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 // Obtener todos los usuarios (Refactorizado a async/await)
-app.get("/usuarios", async (req: Request, res: Response) => {
-	try {
-		console.log("Buscando usuarios en la 'Base de Datos'...");
-		const listaUsuarios = await getUsuariosDB();
-		console.log("Usuarios encontrados.");
-		res.json(listaUsuarios);
-	} catch (error) {
-		console.error("Error al buscar usuarios", error);
-		res.status(500).send("Error en el servidor");
+app.get(
+	"/usuarios",
+	validateRequesterExists,
+	async (req: Request, res: Response) => {
+		try {
+			const usuariosDeBD = await Usuario.find();
+			res.json(usuariosDeBD);
+		} catch (error) {
+			res.status(500).send("Error al obtener usuarios");
+		}
 	}
-});
+);
 
 // Ruta protegida por el middleware 'isAdmin'
 app.get("/admin", isAdmin, (req: Request, res: Response) => {
@@ -41,16 +46,27 @@ app.get("/admin", isAdmin, (req: Request, res: Response) => {
 });
 
 // Obtener un usuario por ID usando req.params
-app.get("/usuarios/:id", (req: Request, res: Response) => {
-	const { id } = req.params;
-	const usuario = usuarios.find((u) => u.id === parseInt(id));
+app.get(
+	"/usuarios/:id",
+	validateRequesterExists,
+	async (req: Request, res: Response) => {
+		const usuarioId = req.params.id;
 
-	if (!usuario) {
-		// Si no se encuentra, enviar un código 404
-		return res.status(404).send("Usuario no encontrado");
+		if (!usuarioId) {
+			res.status(404).send("no tiene id");
+		}
+
+		try {
+			const usuarioEncontrado = await Usuario.findById(usuarioId);
+			if (!usuarioEncontrado) {
+				res.status(404).send("usuario no existe en base de datos");
+			}
+			res.json(usuarioEncontrado);
+		} catch (error) {
+			res.status(500).send("Error al obtener usuario");
+		}
 	}
-	res.json(usuario);
-});
+);
 
 // Buscar usuarios por nombre usando req.query
 // Ejemplo de consulta: /user?nombre=John
@@ -70,26 +86,27 @@ app.get("/user", (req: Request, res: Response) => {
 });
 
 // Crear un nuevo usuario usando req.body
-app.post("/new-user", (req: Request, res: Response) => {
-	// Desestructuramos los datos del body
-	const { nombre, apellido, email } = req.body;
+app.post("/new-user", async (req: Request, res: Response) => {
+	try {
+		// Desestructuramos los datos del body
+		const { nombre, apellido, email } = req.body;
 
-	if (!nombre || !apellido || !email) {
-		return res.status(400).send("Faltan datos (nombre, apellido, email)");
+		if (!nombre || !apellido || !email) {
+			return res.status(400).send("Faltan datos (nombre, apellido, email)");
+		}
+
+		const nuevoUsuario = new Usuario({
+			nombre: nombre,
+			apellido: apellido,
+			email: email,
+		});
+
+		await nuevoUsuario.save();
+		// Enviamos una respuesta exitosa, código 201 (Created)
+		res.status(201).json(nuevoUsuario);
+	} catch (error) {
+		res.status(500).send("Error al crear usuario " + (error as Error).message);
 	}
-
-	const nuevoUsuario = {
-		id: incrementNextId(),
-		nombre: nombre,
-		apellido: apellido,
-		email: email,
-	};
-
-	// Lógica para guardar (en nuestro array)
-	usuarios.push(nuevoUsuario);
-
-	// Enviamos una respuesta exitosa, código 201 (Created)
-	res.status(201).json(nuevoUsuario);
 });
 
 // Actualizar un usuario por ID
